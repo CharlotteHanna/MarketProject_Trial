@@ -1,0 +1,173 @@
+[
+
+[
+    {
+    "username": "john_doe",
+    "email": "john@example.com",
+    "password": "password123"
+},
+
+{
+    "username": "jane_smith",
+    "email": "jane@example.com",
+    "password": "securePass!23"
+},
+
+{
+    "username": "bob_brown",
+    "email": "bob@example.com",
+    "password": "myPassword!1"
+},
+
+{
+    "username": "alice_jones",
+    "email": "alice@example.com",
+    "password": "alicePassword#45"
+},
+
+{
+    "username": "charlie_davis",
+    "email": "charlie@example.com",
+    "password": "charlieSecure99"
+}
+],
+
+
+[
+    {
+    "product_name": "Leather Jacket",
+    "description": "A classic leather jacket in excellent condition",
+    "price": 12000,
+    "image_url": "http://example.com/leather-jacket.jpg",
+    "product_category": "Fashion"
+},
+{
+    "product_name": "Mountain Bike",
+    "description": "Used mountain bike, perfect for rough terrains",
+    "price": 30000,
+    "image_url": "http://example.com/mountain-bike.jpg",
+    "product_category": "Sports",
+    "product_status": "reserved",
+    "seller_id":  3,
+    "buyer_id": 2
+}, 
+{
+    "product_name": "Smartphone",
+    "description": "Latest smartphone with high-resolution camera",
+    "price": 70000,
+    "image_url": "http://example.com/smartphone.jpg",
+    "product_category": "Electronics",
+    "product_status": "sold",
+    "seller_id": 1,
+    "buyer_id": 4
+},
+{
+    "product_name": "Coffee Maker",
+    "description": "Automatic coffee maker with multiple settings",
+    "price": 4500,
+    "image_url": "http://example.com/coffee-maker.jpg",
+    "product_category": "Kitchen Appliances",
+    "product_status": "available",
+    "seller_id": 4,
+    "buyer_id": 0
+},
+{
+    "product_name": "Vintage Lamp",
+    "description": "A beautiful vintage lamp from the 1920s",
+    "price": 7550,
+    "image_url": "http://example.com/vintage-lamp.jpg",
+    "product_category": "Home Decor",
+    "product_status": "available",
+    "seller_id": 1,
+    "buyer_id": 0
+}
+
+],
+
+[
+    {
+        "desired_product_id": 5,
+        "potential_buyer_id": 1
+      },
+
+      {
+        "desired_product_id": 4,
+        "potential_buyer_id": 3
+      },
+
+
+      {
+        "desired_product_id": 1,
+        "potential_buyer_id": 2
+      },
+
+      {
+        "desired_product_id": 2,
+        "potential_buyer_id": 5
+      },
+
+      {
+        "desired_product_id": 3,
+        "potential_buyer_id": 4
+      }
+],
+
+[
+    
+    {
+        "content": "Is the vintage lamp still available?",
+        "conversation_id": 1,
+        "sender_id": 5
+      },
+
+      {
+        "content": "Yes, it is available. Would you like to purchase it?",
+        "conversation_id": 1,
+        "sender_id": 1
+      },
+    {
+        "content": "Is the mountain bike still reserved?",
+        "conversation_id": 2,
+        "sender_id": 4
+      },
+
+
+      {
+        "content": "Hi, I’m interested in the leather jacket.",
+        "conversation_id": 3,
+        "sender_id": 1
+      },
+
+      {
+        "content": "Can we negotiate the price on the smartphone?",
+        "conversation_id": 4,
+        "sender_id": 2
+      }
+],
+[
+    {
+        "paid_product_id": 1,
+        "payment_amount": 12000,
+        "payment_status": "completed",
+        "payment_method": "Credit Card"
+      },
+      
+      {
+        "paid_product_id": 2,
+        "payment_amount": 30000,
+        "payment_status": "pending",
+        "payment_method": "string"
+      },
+
+      {
+        "paid_product_id": 3,
+        "payment_amount": 70000,
+        "payment_status": "completed",
+        "payment_method": "PayPal"
+      }
+
+      
+]
+
+
+]
