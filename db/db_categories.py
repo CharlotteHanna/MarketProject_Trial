@@ -38,7 +38,7 @@ def update_category(db: Session, id: int, request: CategoryBase):
     category = db.query(DbCategory).filter(DbCategory.category_id == id)
     category.update({
             DbCategory.category_name: request.category_name
-         })
+        })
     db.commit()
     return category.first()
     

@@ -29,7 +29,7 @@ def create_rating(
 def get_ratings_aggregation(db: Session, user_id: int):  
     avg_rating = db.query(func.avg(DbRating.rating)).filter(DbRating.ratee_id == user_id).scalar()  
     avg_seller_rating, avg_buyer_rating = calculate_average_ratings(db, ratee_id=user_id)  # Get both averages  
-    rating_count = db.query(func.count(DbRating.rating_id)).filter(DbRating.ratee_id == user_id).scalar()  
+    rating_count = db.query(func.count(DbRating.id)).filter(DbRating.ratee_id == user_id).scalar()  
 
     if avg_rating is None or rating_count == 0:  
         return None  
@@ -42,7 +42,7 @@ def get_ratings_aggregation(db: Session, user_id: int):
         rating_count=rating_count  
     )
 
-def get_ratings_by_ratee_and_total(  
+def get_ratings_by_ratee(  
     db: Session,  
     ratee_id: Optional[int] = None,  
     product_id: Optional[int] = None,
@@ -84,12 +84,12 @@ def calculate_average_ratings(db: Session, ratee_id: Optional[int] = None) -> Tu
 
     return avg_seller, avg_buyer
 
-def get_rating_by_rating_id(db: Session, rating_id: int):  
-    return db.query(DbRating).filter(DbRating.rating_id == rating_id).first()
+def get_rating_by_id(db: Session, id: int):  
+    return db.query(DbRating).filter(DbRating.id == id).first()
 
 
-def update_rating(db: Session, rating_id: int, request: RatingBase):  
-    rating = db.query(DbRating).filter(DbRating.rating_id == rating_id).first()  
+def update_rating(db: Session, id: int, request: RatingBase):  
+    rating = db.query(DbRating).filter(DbRating.id == id).first()  
     if rating:  
         rating.rating = request.rating  
         rating.review = request.review  
@@ -97,8 +97,8 @@ def update_rating(db: Session, rating_id: int, request: RatingBase):
         db.refresh(rating)  
     return rating
 
-def delete_rating(db: Session, rating_id: int):  
-    rating = db.query(DbRating).filter(DbRating.rating_id == rating_id).first()  
+def delete_rating(db: Session, id: int):  
+    rating = db.query(DbRating).filter(DbRating.id == id).first()  
     if rating:  
         db.delete(rating)  
         db.commit()

@@ -52,7 +52,7 @@ def get_all_payments(db: Session, user_id: int):
 def get_payment(db: Session, id: int, user_id: int):
     payment = db.query(DbPayment).filter(DbPayment.payment_id==id).first()
     if not payment:
-      raise PaymentNotFound()
+        raise PaymentNotFound()
     payment = (
     db.query(DbPayment)
     .join(DbProduct, DbProduct.product_id == DbPayment.paid_product_id)
@@ -61,7 +61,7 @@ def get_payment(db: Session, id: int, user_id: int):
         or_(DbProduct.seller_id == user_id, DbProduct.buyer_id == user_id)  
     )
     .first()  
-     )
+    )
     if not payment:
         raise CanNotAccessPayment()
 

@@ -8,14 +8,14 @@ from sqlalchemy.orm import Session
 from jose.exceptions import JWTError
 from db import db_users
 from db.models import DbUser
- 
- 
+
+
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
- 
+
 SECRET_KEY = '77407c7339a6c00544e51af1101c4abb4aea2a31157ca5f7dfd87da02a628107'
 ALGORITHM = 'HS256'
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
- 
+
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
   # sourcery skip: aware-datetime-for-utc, simplify-dictionary-update
   to_encode = data.copy()
@@ -66,4 +66,3 @@ def check_admin(current_user: DbUser = Depends(get_current_user)):
         )
 
     return current_user
- 

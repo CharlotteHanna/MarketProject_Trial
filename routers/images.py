@@ -12,7 +12,7 @@ router = APIRouter(
     tags=["image"]
 )
 
-@router.post('/uploadfile')
+@router.post('/')
 def upload_image(upload_file: UploadFile = File(...), current_user: UserBase = Depends(get_current_user)):  # db: Session = Depends(get_db),
     
     letter = string.ascii_letters
@@ -29,20 +29,13 @@ def upload_image(upload_file: UploadFile = File(...), current_user: UserBase = D
             'type': upload_file.content_type,
             'image_url': image_url
             }
-    
-    
 
-# @router.get('/download/{name}', response_class=FileResponse)
-# def download_image(name: str):  #db: Session = Depends(get_db),
-#     path = f"images/{name}"
-#     return (path)
-
-@router.get('/get_image/{name}')
+@router.get('/{name}')
 def get_image_by_name(name: str):  #, db: Session = Depends(get_db)
     image_url = f"/image/download/{name}"
     return {'image_url': image_url}
 
-@router.get('/get_all_images')
+@router.get('/')
 def get_all_images():
     images_directory = 'images'
     image_files = os.listdir(images_directory)
