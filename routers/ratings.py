@@ -2,7 +2,7 @@ from typing import List, Optional
 from fastapi import APIRouter, Depends, HTTPException, Query, logger
 from sqlalchemy.orm import Session
 from db.database import get_db
-from schemas import RatingAggregation, RatingBase, RatingDisplay, RatingsResponse
+from schemas import RatingAggregation, RatingBase, RatingDisplay, RatingUpdate, RatingsResponse
 from db import db_ratings
 from auth.oauth2 import get_current_user
 from db.models import DbProduct, DbRating, DbUser
@@ -98,9 +98,8 @@ def get_ratings_by_ratee(
     limit: int = Query(10, ge=1, le=100, description="Maximum number of records to return"),   
     db: Session = Depends(get_db)  
 ):   
-    # try:  
         # Get ratings and total  
-        ratings, total_ratings = db_ratings.get_ratings_by_ratee_and_total(  
+        ratings, total_ratings = db_ratings.get_ratings_by_ratee(  
             db, ratee_id=ratee_id, product_id=product_id, skip=skip, limit=limit  
         )  
         
@@ -123,11 +122,11 @@ def get_ratings_by_ratee(
     
     
 @router.get('/{id}', response_model=RatingDisplay)  
-def get_rating_by_rating_id(  
+def get_rating_by_id(  
     id: int,  
     db: Session = Depends(get_db)  
 ):  
-    rating = db_ratings.get_rating_by_rating_id(db, id)  
+    rating = db_ratings.get_rating_by_id(db, id)  
     if not rating:  
         raise HTTPException(status_code=404, detail="Rating not found")  
     return rating 
@@ -137,11 +136,11 @@ def get_rating_by_rating_id(
 @router.put('/{id}', response_model=RatingDisplay)  
 def update_rating(  
     id: int,  
-    request: RatingBase,  
+    request: RatingUpdate,  
     db: Session = Depends(get_db),  
     current_user: DbUser = Depends(get_current_user)  
 ):  
-    rating = db_ratings.get_rating_by_rating_id(db, id)  
+    rating = db_ratings.get_rating_by_id(db, id)
     if not rating:  
         raise HTTPException(status_code=404, detail="Rating not found")  
 
@@ -158,7 +157,7 @@ def delete_rating(
     current_user: DbUser = Depends(get_current_user)  
 ):  
     # Retrieve the rating by its ID  
-    rating = db_ratings.get_rating_by_rating_id(db, id)  
+    rating = db_ratings.get_rating_by_id(db, id)  
     if not rating:  
         raise HTTPException(status_code=404, detail="Rating not found")  
 
@@ -169,22 +168,3 @@ def delete_rating(
     # Proceed to delete the rating since the user is authorized  
     db_ratings.delete_rating(db, id)  
     return  # No content to return for a 204 response
-
-
-    # except Exception as e:  
-    #     logger.error(f"Error in get_ratings_by_ratee: {str(e)}")  
-    #     raise HTTPException(  
-    #         status_code=500,  
-    # #         detail="An error occurred while fetching ratings"  
-    #     )
-    
-    # return ratings
-
-# @router.get('/', response_model=List[RatingDisplay])  
-# def get_ratings_by_rater(  
-#     rater_id: Optional[int] = Query(None, description="Filter by rater ID"),  
-#     product_id: Optional[int] = Query(None, description="Filter by product ID"),  
-#     db: Session = Depends(get_db)  
-# ):  
-#     ratings = db_ratings.get_ratings_by_rater(db, rater_id=rater_id, product_id=product_id)  
-#     return ratings

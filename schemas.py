@@ -17,7 +17,7 @@ class RatingBase(BaseModel):
 
 # Schema for displaying a rating  
 class RatingDisplay(BaseModel):
-    rating_id: int
+    id: int
     product_id: int
     rating: int
     review: Optional[str]
@@ -47,7 +47,9 @@ class RatingAggregation(BaseModel):
     average_buyer_rating: Optional[float]  # Average rating as a buyer 
     rating_count: int
 
-
+class RatingUpdate(BaseModel):  
+    rating: Optional[int] = Annotated[int, Body(ge=1, le=5)]
+    review: Optional[str] = None
 
 
 ### User ###
@@ -159,8 +161,7 @@ class ConversationDisplay(BaseModel):
 # Base schema for Messages
 class MessageBase(BaseModel):
     content: str
-   
- 
+
 
 
 # Schema for displaying a message 
@@ -197,9 +198,3 @@ class PaymentsDisplay(BaseModel):
 
     class Config:
         orm_mode = True
-        
-    
-
-   
-    
- 

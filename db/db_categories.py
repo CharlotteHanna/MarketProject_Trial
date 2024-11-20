@@ -37,7 +37,7 @@ def update_category(db: Session, id: int, request: CategoryBase):
 
     category.update({
             DbCategory.category_name: request.category_name
-         })
+        })
     db.commit()
     return {'message': f'Category with id: {id} was updated'}
     
@@ -53,9 +53,3 @@ def delete_category(db: Session, id: int):
     db.delete(category)
     db.commit()
     return {'message': f'Category with id: {id} was deleted'}  # Return the deleted category object  
-
-
-
-
-
-

@@ -97,9 +97,3 @@ def delete_product(db: Session, id: int):
     db.delete(product)
     db.commit()
     return  
-
-
-
-
-
-

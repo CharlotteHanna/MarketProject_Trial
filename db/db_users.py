@@ -32,7 +32,7 @@ def create_user(db: Session, request: UserBase):
         db.commit()
         db.refresh(new_user)
         return new_user
-           
+
 
 #Return all users from DB   
 def get_all_users(db: Session):
@@ -63,7 +63,7 @@ def update_user(db: Session, id: int, request: UserUpdate):
         })
     db.commit()
     return user.first()
-   
+
 
 #Delete user from DB  
 def delete_user(db: Session, id: int):
@@ -71,4 +71,3 @@ def delete_user(db: Session, id: int):
     db.delete(user)
     db.commit()
     return
-  

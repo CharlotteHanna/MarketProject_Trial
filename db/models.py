@@ -9,7 +9,7 @@ from enums import PaymentStatus, ProductStatus
 # Rating Table
 class DbRating(Base):  
     __tablename__ = "ratings"  
-    rating_id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True, index=True)
     product_id = Column(Integer, ForeignKey("products.product_id"))
     rating = Column(Integer)  # 1-5 rating  
     review = Column(String, nullable=True)  # Optional review text  
@@ -72,7 +72,7 @@ class DbProduct(Base):
     product_category = relationship("DbCategory",  foreign_keys=[product_category_id], back_populates="product")
     product_conversation = relationship("DbConversation",  back_populates="product")
     payments = relationship("DbPayment",  back_populates="paid_product")
-   
+
 
 
 # Category Table
