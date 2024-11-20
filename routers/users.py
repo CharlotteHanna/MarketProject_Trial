@@ -13,7 +13,7 @@ router = APIRouter(
     tags=["users"]
 )
 
-#Use Create User functionality from db_users file
+#Use Create User  functionality from db_users file
 @router.post('/', response_model=UserDisplay,  status_code=status.HTTP_201_CREATED)
 def create_user(request: UserBase, db: Session = Depends(get_db)):
     user = db_users.user_exists(db, request.username, request.email)
@@ -80,7 +80,7 @@ def delete_user(id: int, db: Session = Depends(get_db), current_user: DbUser = D
         first_admin = db.query(DbUser).filter(DbUser.is_admin==True).first()
         #admin can not be deleted
         if id == first_admin.user_id:
-            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Admin cn not be deletd")
+            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Admin can not be deleted")
         
         db_users.get_user(db, id)
         return db_users.delete_user(db, id)

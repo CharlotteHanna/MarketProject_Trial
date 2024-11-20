@@ -90,6 +90,7 @@ class CategoryBase(BaseModel):
 
 # Schema for displaying a category 
 class CategoryDisplay(BaseModel):
+    category_id: int
     category_name: str
     class Config:
         orm_mode = True
@@ -103,6 +104,7 @@ class ProductBase(BaseModel):
     product_name: Annotated[str, Body(min_length= 1, max_length= 25)]
     description: Annotated[str, Body(min_length= 5, max_length= 500)]
     price: Annotated[int, Body(gt=0)]
+    seller_id: int
     image_url: Annotated[str, Body(min_length= 5)]
     product_category_id: int
 
@@ -120,7 +122,15 @@ class ProductDisplay(BaseModel):
     seller: UserDisplay
     class Config:
         orm_mode = True
-        
+
+
+# update schema for products
+class ProductUpdate(BaseModel):
+    product_name: Annotated[str, Body(min_length= 1, max_length= 25)]
+    description: Annotated[str, Body(min_length= 5, max_length= 500)]
+    price: Annotated[int, Body(gt=0)]
+    image_url: Annotated[str, Body(min_length= 5)]
+    product_category_id: int       
 
 # class Message inside ConversationDisplay
 class Message(BaseModel):

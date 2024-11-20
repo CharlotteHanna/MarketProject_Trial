@@ -1,5 +1,6 @@
 from db.models import DbCategory
 from sqlalchemy.orm import Session
+from exceptions import CategoryNotFound
 from schemas import CategoryBase
 from fastapi import HTTPException, status
 
@@ -26,20 +27,20 @@ def get_all_categories(db:Session):
     
 #Return category from DB with specific ID 
 def get_category(db: Session, id: int):
-    return db.query(DbCategory).filter(DbCategory.category_id == id).first()
+    category =  db.query(DbCategory).filter(DbCategory.category_id == id).first()
+    if not category:
+            raise CategoryNotFound()
+    return category
 
 
 #Update category
 def update_category(db: Session, id: int, request: CategoryBase):
-    category = db.query(DbCategory).filter(DbCategory.category_id == id) 
-    if not category.first(): #this is our record
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Category with id {id} was not found")
-
+    category = db.query(DbCategory).filter(DbCategory.category_id == id)
     category.update({
             DbCategory.category_name: request.category_name
          })
     db.commit()
-    return {'message': f'Category with id: {id} was updated'}
+    return category.first()
     
     
 
@@ -47,12 +48,9 @@ def update_category(db: Session, id: int, request: CategoryBase):
 #Delete Category from DB    
 def delete_category(db: Session, id: int):
     category = db.query(DbCategory).filter(DbCategory.category_id == id).first()
-    if not category:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Category with id {id} was not found")
-    
     db.delete(category)
     db.commit()
-    return {'message': f'Category with id: {id} was deleted'}  # Return the deleted category object  
+    return 
 
 
 

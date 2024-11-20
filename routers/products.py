@@ -2,7 +2,7 @@ from typing import List, Optional
 from fastapi import APIRouter, Depends, HTTPException, status
 from db.models import DbUser
 from exceptions import CategoryNotFound, InsufficientPermission
-from schemas import ProductBase, ProductDisplay
+from schemas import ProductBase, ProductDisplay, ProductUpdate
 from sqlalchemy.orm import Session
 from db.database import get_db
 from db import db_categories, db_products
@@ -16,7 +16,9 @@ router = APIRouter(
 #Use Create Product functionality from db_products file
 @router.post('/', response_model=ProductDisplay,  status_code=status.HTTP_201_CREATED)
 def create_product(request: ProductBase, db: Session = Depends(get_db), current_user: DbUser = Depends(get_current_user)):
-       
+        # if current_user.user_id is not request.seller_id:
+        if not (current_user.user_id is request.seller_id or current_user.is_admin):
+                raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail='User should provide his own id in seller_id')
         return db_products.create_product(db, request, current_user.user_id)
     
 
@@ -39,10 +41,10 @@ def get_product(id: int, db: Session = Depends(get_db) ):
 
 #Use Update Product functionality from db_products file
 @router.put('/{id}', response_model=ProductDisplay,  status_code=status.HTTP_200_OK)
-def update_product(id: int, request: ProductBase, db: Session = Depends(get_db), current_user: DbUser = Depends(get_current_user)):
+def update_product(id: int, request: ProductUpdate, db: Session = Depends(get_db), current_user: DbUser = Depends(get_current_user)):
         db_products.get_product(db, id)
-        if db_products.get_seller_id(db, id) != current_user.user_id:
-                raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='You do not have enough permissions to perform this action')
+        if not (db_products.get_seller_id(db, id) is current_user.user_id or current_user.is_admin):
+                raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail='You do not have enough permissions to perform this action')
      
         return db_products.update_product(db, id, request)
   
@@ -57,8 +59,8 @@ def update_product(id: int, request: ProductBase, db: Session = Depends(get_db),
 def delete_product(id: int, db: Session = Depends(get_db), current_user: DbUser = Depends(get_current_user)):
         db_products.get_product(db, id)
         
-        if db_products.get_seller_id(db, id) != current_user.user_id:
-                raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='You do not have enough permissions to perform this action')
+        if not (db_products.get_seller_id(db, id) is current_user.user_id or current_user.is_admin):
+                raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail='You do not have enough permissions to perform this action')
      
         return db_products.delete_product(db, id)
 

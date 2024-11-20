@@ -15,10 +15,10 @@ from enums import PaymentStatus
 def create_payment(db: Session, request: PaymentsBase, user_id: int):
 
     product = db_products.get_product(db, request.paid_product_id)
-    if product.product_status != ProductStatus.AVAILABLE:
+    if product.product_status is not ProductStatus.AVAILABLE:
         raise CanNotPayForReservedProduct()
-    if product.seller_id == user_id:
-        raise CanNotPayForProduct()
+    # if product.seller_id is user_id:
+    #     raise CanNotPayForProduct()
     
     
     db_products.update_product_status_buyer(db, request.paid_product_id, user_id)
@@ -32,7 +32,10 @@ def create_payment(db: Session, request: PaymentsBase, user_id: int):
     db.refresh(new_payment)
     return new_payment
 
-
+# return all payments if admin
+def get_all_payments_admin(db: Session):
+    return db.query(DbPayment).all()
+    
 #Return all Payments from DB
 def get_all_payments(db: Session, user_id: int):
     payments = (

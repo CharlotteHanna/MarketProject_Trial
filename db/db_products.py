@@ -24,7 +24,7 @@ def create_product(db: Session, request: ProductBase, user_id: int):
             product_name=request.product_name,
             description=request.description,
             price=request.price,
-            seller_id=user_id,
+            seller_id=request.seller_id,
             image_url=request.image_url,
             product_category_id=request.product_category_id,
             product_status= ProductStatus.AVAILABLE
@@ -72,7 +72,8 @@ def get_seller_id(db: Session, id: int):
 #Update attributes in products table   
 def update_product(db: Session, id: int, user_id: int, request: ProductBase):
    
-    product = db.query(DbProduct).filter(DbProduct.product_id == id).update({
+    product = db.query(DbProduct).filter(DbProduct.product_id == id)
+    product.update({
             DbProduct.product_name: request.product_name,
             DbProduct.description: request.description,
             DbProduct.price: request.price,

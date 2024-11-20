@@ -18,10 +18,10 @@ tags=['messages']
 
 
 
-#Use Create Message functionality from db_messages file
+#Use Create Message functionality  from db_messages file
 @router.post('/', response_model=MessageDisplay,  status_code=status.HTTP_200_OK)
 def create_message(request: MessageBase , conversation_id: Optional[int] = None, desired_product_id: Optional[int] = None, db: Session = Depends(get_db), current_user: DbUser = Depends(get_current_user)):
-    if not conversation_id and not desired_product_id:
+    if not (conversation_id or desired_product_id):
         raise FillParameters()
     message=  db_messages.create_message(db, request, conversation_id, desired_product_id, current_user.user_id)
     if not message:
@@ -36,8 +36,8 @@ def create_message(request: MessageBase , conversation_id: Optional[int] = None,
 def delete_message(id: int, db: Session = Depends(get_db), current_user: DbUser = Depends(get_current_user)):
   
   message = db_messages.message_exists(db, id)
-  if message.sender_id != current_user.user_id:
-     raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='You do not have enough permissions to perform this action')
+  if message.sender_id is not current_user.user_id:
+     raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail='You do not have enough permissions to perform this action')
   message = db_messages.delete_message(db, id)
  
   

@@ -46,16 +46,12 @@ def get_user(db: Session, user_id: int):
     return user
 
 
-def get_user_by_username(db: Session, username: str):
-    user = db.query(DbUser).filter(DbUser.username == username).first()
-    if not user:
-        raise UserNotFound()
-    return user
 
 #Update attributes in users table
 def update_user(db: Session, id: int, request: UserUpdate):
     
-    user = db.query(DbUser).filter(DbUser.user_id == id).update({
+    user = db.query(DbUser).filter(DbUser.user_id == id)
+    user.update({
         DbUser.username: request.username,
         DbUser.email: request.email,
         DbUser.password: Hash.bcrypt(request.password),
