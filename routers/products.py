@@ -1,5 +1,5 @@
 from typing import List, Optional  
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 from db.models import DbUser
 from exceptions import CategoryNotFound, InsufficientPermission
 from schemas import ProductBase, ProductDisplay, ProductUpdate
@@ -25,7 +25,7 @@ def create_product(request: ProductBase, db: Session = Depends(get_db), current_
 #Use read Product functionality from db_products file
         #return all products which not sold
 @router.get('/', response_model=List[ProductDisplay],  status_code=status.HTTP_200_OK)
-def get_all_products(category_id: Optional[int] = None, nameQuery: Optional[str] = None, descriptionQuery: Optional[str] = None,db: DbUser = Depends(get_db)):
+def get_all_products(category_id: Optional[int] = Query(None, description="Filter by category ID"), nameQuery: Optional[str] = Query(None, description="Filter by product name"), descriptionQuery: Optional[str] = Query(None, description="Filter by product description"),db: DbUser = Depends(get_db)):
         return db_products.get_all_products(db, category_id, nameQuery, descriptionQuery)
         
 
@@ -50,9 +50,7 @@ def update_product(id: int, request: ProductUpdate, db: Session = Depends(get_db
   
                 
        
-       
-    
-  
+
 
 #Use Delete Product functionality from db_products file
 @router.delete('/{id}',  status_code=status.HTTP_204_NO_CONTENT)

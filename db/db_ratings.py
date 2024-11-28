@@ -1,6 +1,7 @@
 from typing import List, Optional, Tuple
 from sqlalchemy import func
 from sqlalchemy.orm import Session
+from db import db_products
 from db.models import DbRating, DbProduct
 from schemas import RatingBase
 from fastapi import HTTPException
@@ -52,7 +53,8 @@ def get_ratings_by_ratee(
     query = db.query(DbRating)  
     if ratee_id:  
         query = query.filter(DbRating.ratee_id == ratee_id)  
-    if product_id:  
+    if product_id: 
+        db_products.get_product(db, product_id) 
         query = query.filter(DbRating.product_id == product_id)  
     total = query.count()  
     ratings = query.offset(skip).limit(limit).all()  

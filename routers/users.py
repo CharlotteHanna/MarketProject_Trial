@@ -13,7 +13,7 @@ router = APIRouter(
     tags=["users"]
 )
 
-#Use Create User  functionality from db_users file
+#Use Create User functionality from db_users file
 @router.post('/', response_model=UserDisplay,  status_code=status.HTTP_201_CREATED)
 def create_user(request: UserBase, db: Session = Depends(get_db)):
     user = db_users.user_exists(db, request.username, request.email)

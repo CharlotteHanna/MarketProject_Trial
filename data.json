@@ -45,10 +45,11 @@
     "product_name": "Mountain Bike",
     "description": "Used mountain bike, perfect for rough terrains",
     "price": 30000,
+    "seller_id":  3,
     "image_url": "http://example.com/mountain-bike.jpg",
     "product_category": "Sports",
     "product_status": "reserved",
-    "seller_id":  3,
+    
     "buyer_id": 2
 }, 
 {
@@ -65,16 +66,18 @@
     "product_name": "Coffee Maker",
     "description": "Automatic coffee maker with multiple settings",
     "price": 4500,
+    "seller_id": 4,
     "image_url": "http://example.com/coffee-maker.jpg",
     "product_category": "Kitchen Appliances",
     "product_status": "available",
-    "seller_id": 4,
+    
     "buyer_id": 0
 },
 {
     "product_name": "Vintage Lamp",
     "description": "A beautiful vintage lamp from the 1920s",
     "price": 7550,
+    "seller_id": 1,
     "image_url": "http://example.com/vintage-lamp.jpg",
     "product_category": "Home Decor",
     "product_status": "available",

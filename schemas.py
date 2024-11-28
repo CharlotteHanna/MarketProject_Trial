@@ -71,7 +71,6 @@ class UserDisplay(BaseModel):
     total_ratings: int = 0
     class Config:
         orm_mode = True
-        from_attributes = True
 
 
 # Schema for updating a user

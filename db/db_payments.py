@@ -89,7 +89,7 @@ def update_payment_status(db: Session, id: int):
     )
     db.commit()
     
-    return payment
+    return payment.first()
 
 
 #Delete Payment from DB

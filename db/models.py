@@ -1,6 +1,5 @@
-
 from datetime import datetime, timezone
-from sqlalchemy import Boolean, Column, DateTime, Enum,Float, ForeignKey, Integer, String, Text
+from sqlalchemy import Boolean, Column, DateTime, Enum,Float, ForeignKey, Integer, String, Text  # noqa: F401
 from db.database import Base
 from sqlalchemy.orm import relationship
 
@@ -72,7 +71,7 @@ class DbProduct(Base):
     product_category = relationship("DbCategory",  foreign_keys=[product_category_id], back_populates="product")
     product_conversation = relationship("DbConversation",  back_populates="product")
     payments = relationship("DbPayment",  back_populates="paid_product")
-   
+
 
 
 # Category Table
@@ -118,4 +117,3 @@ class DbPayment(Base):
     paid_product = relationship("DbProduct",  foreign_keys=[paid_product_id], back_populates="payments")
 
     #  paid_product = relationship("DbProduct",  foreign_keys=[paid_product_id], back_populates="payments")
-

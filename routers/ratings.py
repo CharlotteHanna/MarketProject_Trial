@@ -1,8 +1,10 @@
 from typing import List, Optional
-from fastapi import APIRouter, Depends, HTTPException, Query, logger
+from fastapi import APIRouter, Depends, HTTPException, Query, logger, status
 from sqlalchemy.orm import Session
 from db.database import get_db
-from schemas import RatingAggregation, RatingBase, RatingDisplay, RatingsResponse
+from enums import ProductStatus
+from exceptions import ProductNotFound
+from schemas import RatingAggregation, RatingBase, RatingDisplay, RatingUpdate, RatingsResponse
 from db import db_ratings
 from auth.oauth2 import get_current_user
 from db.models import DbProduct, DbRating, DbUser
@@ -18,42 +20,42 @@ def create_rating(
     db: Session = Depends(get_db),
     current_user:DbUser = Depends(get_current_user)):
     
-    #Retrieve the product without using the current user
+    #Retrieve the  product without using the current user
     product = db.query(DbProduct).filter(DbProduct.product_id == request.product_id).first()
     if not product:
-        raise HTTPException(status_code=404, detail="Product not found")
+        raise ProductNotFound()
 
     # Perform security checks after data retrieval
 
     # Check if the product has been sold
-    if product.product_status != 'sold':
-        raise HTTPException(status_code=400, detail="Can only rate sold products")
+    if product.product_status is not ProductStatus.SOLD:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Can only rate sold products")
 
     # Ensure the user being rated is involved in the transaction
     if request.ratee_id not in [product.seller_id, product.buyer_id]:
         raise HTTPException(
-            status_code=400,
+            status_code=status.HTTP_403_FORBIDDEN,
             detail="The user being rated is not involved in this transaction"  
         )
 
     # Ensure the rater is involved in the transaction
     if request.rater_id not in [product.seller_id, product.buyer_id]:
         raise HTTPException(
-            status_code=400,
+            status_code=status.HTTP_403_FORBIDDEN,
             detail="The user giving the rating is not involved in this transaction"
         )
 
     # Prevent a user from rating themselves
     if request.ratee_id == request.rater_id:
         raise HTTPException(
-            status_code=400,
+            status_code=status.HTTP_403_FORBIDDEN,
             detail="You cannot rate yourself"
         )
 
     # Ensure the rater is the current user
     if request.rater_id != current_user.user_id:
         raise HTTPException(
-            status_code=403,
+            status_code=status.HTTP_403_FORBIDDEN,
             detail="You are not authorized to rate on behalf of another user"
         )
 
@@ -64,7 +66,7 @@ def create_rating(
     ).first()
     if existing_rating:
         raise HTTPException(
-            status_code=400,
+            status_code=status.HTTP_403_FORBIDDEN,
             detail="You have already rated this transaction"
         )
 
@@ -100,7 +102,7 @@ def get_ratings_by_ratee(
 ):   
     # try:  
         # Get ratings and total  
-        ratings, total_ratings = db_ratings.get_ratings_by_ratee_and_total(  
+        ratings, total_ratings = db_ratings.get_ratings_by_ratee(  
             db, ratee_id=ratee_id, product_id=product_id, skip=skip, limit=limit  
         )  
         
@@ -111,7 +113,7 @@ def get_ratings_by_ratee(
                 db, ratee_id=ratee_id  
             )  
         
-        # Construct the response dictionary  
+        # Construct  the response dictionary  
         response_data = {  
             "ratings": ratings,  
             "average_seller_rating": average_seller_rating,  
@@ -123,13 +125,13 @@ def get_ratings_by_ratee(
     
     
 @router.get('/{id}', response_model=RatingDisplay)  
-def get_rating_by_rating_id(  
+def get_rating_by_id(  
     id: int,  
     db: Session = Depends(get_db)  
 ):  
-    rating = db_ratings.get_rating_by_rating_id(db, id)  
+    rating = db_ratings.get_rating_by_id(db, id)  
     if not rating:  
-        raise HTTPException(status_code=404, detail="Rating not found")  
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Rating not found")  
     return rating 
 
 
@@ -137,16 +139,16 @@ def get_rating_by_rating_id(
 @router.put('/{id}', response_model=RatingDisplay)  
 def update_rating(  
     id: int,  
-    request: RatingBase,  
+    request: RatingUpdate,  
     db: Session = Depends(get_db),  
     current_user: DbUser = Depends(get_current_user)  
 ):  
-    rating = db_ratings.get_rating_by_rating_id(db, id)  
+    rating = db_ratings.get_rating_by_id(db, id)  
     if not rating:  
-        raise HTTPException(status_code=404, detail="Rating not found")  
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Rating not found")  
 
     if rating.rater_id != current_user.user_id:  
-        raise HTTPException(status_code=403, detail="Not authorized to update this rating")  
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Not authorized to update this rating")  
 
     updated_rating = db_ratings.update_rating(db, id, request)  
     return updated_rating
@@ -158,33 +160,15 @@ def delete_rating(
     current_user: DbUser = Depends(get_current_user)  
 ):  
     # Retrieve the rating by its ID  
-    rating = db_ratings.get_rating_by_rating_id(db, id)  
+    rating = db_ratings.get_rating_by_id(db, id)  
     if not rating:  
-        raise HTTPException(status_code=404, detail="Rating not found")  
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Rating not found")  
 
     # Check if the current user is the one who created the rating  
     if rating.rater_id != current_user.user_id:  
-        raise HTTPException(status_code=403, detail="Not authorized to delete this rating")  
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Not authorized to delete this rating")  
 
     # Proceed to delete the rating since the user is authorized  
     db_ratings.delete_rating(db, id)  
     return  # No content to return for a 204 response
 
-
-    # except Exception as e:  
-    #     logger.error(f"Error in get_ratings_by_ratee: {str(e)}")  
-    #     raise HTTPException(  
-    #         status_code=500,  
-    # #         detail="An error occurred while fetching ratings"  
-    #     )
-    
-    # return ratings
-
-# @router.get('/', response_model=List[RatingDisplay])  
-# def get_ratings_by_rater(  
-#     rater_id: Optional[int] = Query(None, description="Filter by rater ID"),  
-#     product_id: Optional[int] = Query(None, description="Filter by product ID"),  
-#     db: Session = Depends(get_db)  
-# ):  
-#     ratings = db_ratings.get_ratings_by_rater(db, rater_id=rater_id, product_id=product_id)  
-#     return ratings

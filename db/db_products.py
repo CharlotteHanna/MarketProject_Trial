@@ -12,7 +12,7 @@ from exceptions import CategoryNotFound, ProductNotFound
 
 
 
-#Functionality in Database
+#Functionality  in Database
 
 #Create product in DB
 def create_product(db: Session, request: ProductBase, user_id: int):

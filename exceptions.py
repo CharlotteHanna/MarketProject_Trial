@@ -72,10 +72,10 @@ class CanNotPayForProduct(MarketPlaceException):
 
 
 class CanNotAccessConversation(MarketPlaceException):
-    """Only Participents in a conversation can access this conversation """
+    """Only Participants in a conversation can access this conversation """
     pass
 class CanNotAccessPayment(MarketPlaceException):
-    """Only Participents in a payment can access this payment """
+    """Only Participants in a payment can access this payment """
     pass
 
 class CanNotDeletePayment(MarketPlaceException):
@@ -203,7 +203,7 @@ def register_all_errors(app: FastAPI):
         create_exception_handler(
             status_code=status.HTTP_403_FORBIDDEN,
             initial_detail={
-                "message": "Only Participents in a conversation can access this conversation",
+                "message": "Only Participants in a conversation can access this conversation",
                 "error_code": "not_party_of_a_conversation",
             },
         ),
@@ -250,7 +250,7 @@ def register_all_errors(app: FastAPI):
         create_exception_handler(
             status_code=status.HTTP_403_FORBIDDEN,
             initial_detail={
-                "message": "Only Participents in a payment can access this payment ",
+                "message": "Only Participants in a payment can access this payment ",
                 "error_code": "not_party_of_a_payment",
             },
         ),
@@ -266,6 +266,20 @@ def register_all_errors(app: FastAPI):
             },
         ),
     )
-    
+
+
+
+    app.add_exception_handler(
+        MessageNotFound,
+        create_exception_handler(
+            status_code=status.HTTP_404_NOT_FOUND,
+            initial_detail={
+                "message": "Message not found",
+                "error_code": "message_not_found",
+            },
+        ),
+    )
+   
+
   
    
